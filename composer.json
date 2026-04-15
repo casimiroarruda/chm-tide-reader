@@ -1,0 +1,21 @@
+{
+    "name": "andr/chm-tide-reader",
+    "description": "Lightweight application to get data from Brazilian Marine regarding of tide variance",
+    "type": "project",
+    "require-dev": {
+        "pds/skeleton": "^1.0"
+    },
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Andr\\ChmTideReader\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Anderson Casimiro",
+            "email": "casimiro.arruda@gmail.com"
+        }
+    ],
+    "require": {}
+}
