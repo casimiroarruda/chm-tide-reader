@@ -12,12 +12,10 @@ require $baseDir . '/vendor/autoload.php';
 $dotenv = new Dotenv();
 $dotenv->load($baseDir . '/.env');
 
-$listingsPath = $baseDir . "/" . ($_ENV["LISTINGS_PATH"] ?? "listings") . "/" . (date("Y"));
 $tidePdfPath = $baseDir . "/" . ($_ENV["TIDE_PDF_PATH"] ?? "tide-pdf");
 
 $containerBuilder = new ContainerBuilder();
 
-$containerBuilder->setParameter('listings_path', $listingsPath);
 $containerBuilder->setParameter('tide_pdf_path', $tidePdfPath);
 $containerBuilder->setParameter('chm_site_host', $_ENV["CHM_SITE_HOST"] ?? "https://marinha.mil.br");
 
