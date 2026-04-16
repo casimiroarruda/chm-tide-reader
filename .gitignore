@@ -1,3 +1,4 @@
 .env
 resources/tide-pdf/**/*.pdf
 vendor/**/*
+vendor/composer/**/*
