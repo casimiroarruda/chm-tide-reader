@@ -32,12 +32,12 @@ class PdfParser
         );
     }
 
-    public function processFiles(array $listingFiles)
+    public function processFiles(array $listingFiles): array
     {
-        foreach ($listingFiles as $file) {
-            $location = $this->processFile($file);
-            echo $location->name . PHP_EOL;
-        }
+        return array_map(
+            fn($file) => $this->processFile($file),
+            $listingFiles
+        );
     }
 
     public function processFile(string $file): Location
@@ -48,6 +48,7 @@ class PdfParser
         foreach ($pdf->getPages() as $page) {
             $this->parsePage($page, $location);
         }
+        echo "[{$location->marineId}] {$location->name}" . PHP_EOL;
         return $location;
     }
     public function extractMarineLocationIdFromFilename(string $filename): string

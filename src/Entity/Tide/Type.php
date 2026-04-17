@@ -11,9 +11,4 @@ enum Type
     {
         return $height > $mean ? self::HIGH : self::LOW;
     }
-
-    public function __toString(): string
-    {
-        return $this->name;
-    }
 }

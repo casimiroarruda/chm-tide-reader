@@ -26,5 +26,6 @@ $containerBuilder->compile();
 
 $pdfParser = $containerBuilder->get(PdfParser::class);
 
-$pdfParser->getListingFiles()
-|> $pdfParser->processFiles(...);
+$locations = $pdfParser->getListingFiles() |> $pdfParser->processFiles(...);
+
+print_r($locations[0]);
