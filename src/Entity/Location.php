@@ -11,7 +11,6 @@ class Location
     public string $marineId;
     public string $name;
     public Point $point;
-    public string $chart;
     public string $meanSeaLevel;
     public DateTimeZone $timeZone;
     public Tide\Collection $tides;
@@ -22,6 +21,6 @@ class Location
 
     public function isFilled(): bool
     {
-        return isset($this->marineId, $this->name, $this->point, $this->chart, $this->meanSeaLevel, $this->timeZone);
+        return isset($this->marineId, $this->name, $this->point, $this->meanSeaLevel, $this->timeZone);
     }
 }

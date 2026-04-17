@@ -17,7 +17,8 @@ return function (ContainerConfigurator $container): void {
 
     $services->set(Configuration::class)
         ->arg('$tidePdfPath', param('tide_pdf_path'))
-        ->arg('$chmSiteHost', param('chm_site_host'));
+        ->arg('$chmSiteHost', param('chm_site_host'))
+        ->arg('$year', param('year'));
 
     $services->set(Parser::class);
 

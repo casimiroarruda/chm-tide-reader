@@ -4,6 +4,8 @@ namespace Andr\ChmTideReader\Service;
 
 use Andr\ChmTideReader\Entity\Location;
 use Andr\ChmTideReader\Entity\Location\Point;
+use Andr\ChmTideReader\Entity\Tide;
+use Andr\ChmTideReader\Entity\Tide\Type;
 use Andr\ChmTideReader\Foundation\Configuration;
 use Smalot\PdfParser\Page;
 use Smalot\PdfParser\Parser;
@@ -11,18 +13,18 @@ use Smalot\PdfParser\Parser;
 class PdfParser
 {
     protected array $months = [
-        "Janeiro",
-        "Fevereiro",
-        "Março",
-        "Abril",
-        "Maio",
-        "Junho",
-        "Julho",
-        "Agosto",
-        "Setembro",
-        "Outubro",
-        "Novembro",
-        "Dezembro"
+        "Janeiro" => "01",
+        "Fevereiro" => "02",
+        "Março" => "03",
+        "Abril" => "04",
+        "Maio" => "05",
+        "Junho" => "06",
+        "Julho" => "07",
+        "Agosto" => "08",
+        "Setembro" => "09",
+        "Outubro" => "10",
+        "Novembro" => "11",
+        "Dezembro" => "12"
     ];
 
     protected array $weekdays = ["QUI", "SEX", "SAB", "DOM", "SEG", "TER", "QUA", "SÁB"];
@@ -45,12 +47,12 @@ class PdfParser
     public function processFiles(array $listingFiles)
     {
         foreach ($listingFiles as $file) {
-            $this->processFile($file);
+            $location = $this->processFile($file);
             break;
         }
     }
 
-    public function processFile(string $file): void
+    public function processFile(string $file): Location
     {
         $pdf = $this->parser->parseFile($file);
         $location = new Location();
@@ -58,6 +60,7 @@ class PdfParser
         foreach ($pdf->getPages() as $page) {
             $this->parsePage($page, $location);
         }
+        return $location;
     }
     public function extractMarineLocationIdFromFilename(string $filename): string
     {
@@ -67,19 +70,27 @@ class PdfParser
             |> array_first(...)
             |> trim(...);
     }
+
     public function parsePage(Page $page, Location $location): void
     {
         $textArray = $page->getTextArray();
-        array_walk($textArray, function ($value, $key) use ($location, $textArray) {
+        $meta = ["year" => $this->configuration->year];
+        array_walk($textArray, function ($value, $key) use ($location, &$textArray, &$meta) {
+            if (!isset($textArray[$key + 1])) {
+                return;
+            }
             $type = $this->discoverType($value, $textArray[$key + 1]);
-            // echo "{$type} - {$value}" . PHP_EOL;
+            if ($type === "month") {
+                $meta["month"] = $value;
+            }
+
             if (is_callable($type)) {
-                $type($location, $key, $textArray);
+                $type($location, $key, $textArray, $meta);
             }
         });
     }
 
-    public function fillLocation(Location $location, int $currentKey, array &$textArray): void
+    public function fillLocation(Location $location, int $currentKey, array &$textArray, array $meta = []): void
     {
         if ($location->isFilled()) {
             return;
@@ -96,7 +107,22 @@ class PdfParser
         |> (fn($str) => (float) trim($str));
     }
 
-    public function addTidesOfTheDay(Location $location, int $currentKey, array &$textArray): void {}
+    public function addTidesOfTheDay(Location $location, int $currentKey, array &$textArray, array $meta = []): void
+    {
+        $day = ltrim($textArray[$currentKey], "0");
+        $month = $this->months[$meta["month"]];
+        $year = $meta["year"];
+        $tides = array_slice($textArray, $currentKey + 2, 4);
+        foreach ($tides as $tide) {
+            if (preg_match("/(?P<hour>\d{2})(?P<minute>\d{2}) {3,4}(?P<height>-?\d{1,2}\.\d{1,2})/", $tide, $matches) !== 1) {
+                continue;
+            };
+            $time = new \DateTime("{$year}-{$month}-{$day} {$matches['hour']}:{$matches['minute']}", $location->timeZone);
+            $height = (float) $matches["height"];
+            $type = $height > $location->meanSeaLevel ? Type::HIGH : Type::LOW;
+            $location->tides->add(new Tide($time, $height, $type));
+        }
+    }
 
 
     public function discoverType(string $text, string $nextText): string|callable
@@ -104,7 +130,7 @@ class PdfParser
         return match (true) {
             preg_match("/([A-ZÀ-Ú()]+ )+-.*/", $text) === 1 && str_starts_with($nextText, "Latitude") => [$this, "fillLocation"],
             str_starts_with($text, "Latitude") => "position",
-            in_array($text, $this->months) => "month",
+            array_key_exists($text, $this->months) => "month",
             is_numeric($text) && in_array($nextText, $this->weekdays) => [$this, "addTidesOfTheDay"],
             preg_match("/\d{4} {3,4}-?\d{1,2}\.\d{2}/", $text) === 1 => "timetide",
             default => "unknown",
