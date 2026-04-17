@@ -7,6 +7,7 @@ use Andr\ChmTideReader\Entity\Location\Point;
 use Andr\ChmTideReader\Entity\Tide;
 use Andr\ChmTideReader\Entity\Tide\Type;
 use Andr\ChmTideReader\Foundation\Configuration;
+use Andr\ChmTideReader\Service\PdfParser\LocationExtractor;
 use Smalot\PdfParser\Page;
 use Smalot\PdfParser\Parser;
 
@@ -48,7 +49,7 @@ class PdfParser
     {
         foreach ($listingFiles as $file) {
             $location = $this->processFile($file);
-            break;
+            echo $location->name . PHP_EOL;
         }
     }
 
@@ -96,15 +97,11 @@ class PdfParser
             return;
         }
         $location->name = str_replace(" - " . date("Y"), "", $textArray[$currentKey]);
-        $string = str_replace("&#39;", "'", $textArray[$currentKey + 1]);
-        preg_match("/Latitude (?P<latitude>.*) Longitude (?P<longitude>.*) Fuso (?P<timezone>.*) horas/", $string, $matches);
-        $location->point = Point::fromDMS($matches["latitude"], $matches["longitude"]);
-        str_replace(["UTC ", "."], ["", ":"], $matches['timezone'])
-        |> (fn($str) => str_pad($str, 6, "0", STR_PAD_RIGHT))
-        |> (fn($str) => $location->timeZone = new \DateTimeZone($str));
-        preg_match("/dio (?P<meanSeaLevel>[0-9.]*)\s?m Carta/", $textArray[$currentKey + 2], $meanSeaLevelMatches);
-        $location->meanSeaLevel = $meanSeaLevelMatches["meanSeaLevel"]
-        |> (fn($str) => (float) trim($str));
+        $locationExtractor = new LocationExtractor($textArray, $currentKey + 1);
+        $locationData = $locationExtractor->extract();
+        $location->point = Point::fromDMS($locationData["latitude"], $locationData["longitude"]);
+        $location->timeZone = $locationData["timeZone"];
+        $location->meanSeaLevel = $locationData["meanSeaLevel"];
     }
 
     public function addTidesOfTheDay(Location $location, int $currentKey, array &$textArray, array $meta = []): void
@@ -124,7 +121,6 @@ class PdfParser
         }
     }
 
-
     public function discoverType(string $text, string $nextText): string|callable
     {
         return match (true) {
@@ -137,17 +133,3 @@ class PdfParser
         };
     }
 }
-/*
-"13"
-"BARRA NORTE - ARCO LAMOSO - 2026"
-"Latitude 01° 26&#39;.1 N Longitude 49° 13&#39;.3 W Fuso UTC -03.0 horas"
-"CHM 26 Componentes Nível Médio 1.9 m Carta 21300"
-"Janeiro"
-"HORA  ALT(m) HORA  ALT(m)"
-"01"
-"QUI"
-"0114    0.29"
-"0755    3.37"
-"1342    0.83"
-"2002    3.59"
-*/

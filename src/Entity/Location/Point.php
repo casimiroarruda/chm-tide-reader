@@ -16,7 +16,7 @@ class Point
 
     public static function DMS2Decimal(string $string): float
     {
-        preg_match("/(?P<degrees>\d{1,2})°\s?(?P<minutes>\d{1,2})'\.(?P<seconds>\d{1,2})\s(?P<direction>[NSWE])/", $string, $matches);
+        preg_match("/(?P<degrees>\d{1,2})°\s?(?P<minutes>\d{1,2})'\.?(?P<seconds>\d?)\s(?P<direction>[NSWE])/", $string, $matches);
         $degrees = (int) ltrim($matches["degrees"], "0");
         $minutes = (int) ltrim($matches["minutes"], "0");
         $seconds = (int) ltrim($matches["seconds"], "0");
