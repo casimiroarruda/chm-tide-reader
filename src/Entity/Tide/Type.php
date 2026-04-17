@@ -2,8 +2,18 @@
 
 namespace Andr\ChmTideReader\Entity\Tide;
 
-enum Type: string
+enum Type
 {
-    case HIGH = "HIGH";
-    case LOW = "LOW";
+    case HIGH;
+    case LOW;
+
+    public static function determine(float $height, float $mean): self
+    {
+        return $height > $mean ? self::HIGH : self::LOW;
+    }
+
+    public function __toString(): string
+    {
+        return $this->name;
+    }
 }

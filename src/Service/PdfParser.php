@@ -101,7 +101,7 @@ class PdfParser
         while (isset($tides[$index]) && preg_match("/(?P<hour>\d{2})(?P<minute>\d{2}) {3,4}(?P<height>-?\d{1,2}\.\d{1,2})/", $tides[$index], $matches) === 1) {
             $time = new \DateTime("{$year}-{$month}-{$day} {$matches['hour']}:{$matches['minute']}", $location->timeZone);
             $height = (float) $matches["height"];
-            $type = $height > $location->meanSeaLevel ? Type::HIGH : Type::LOW;
+            $type = Type::determine($height, $location->meanSeaLevel);
             $location->tides->add(new Tide($time, $height, $type));
             $matches = [];
             $index++;
