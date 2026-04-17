@@ -7,27 +7,13 @@ use Andr\ChmTideReader\Entity\Location\Point;
 use Andr\ChmTideReader\Entity\Tide;
 use Andr\ChmTideReader\Entity\Tide\Type;
 use Andr\ChmTideReader\Foundation\Configuration;
+use Andr\ChmTideReader\Foundation\Month;
 use Andr\ChmTideReader\Service\PdfParser\LocationExtractor;
 use Smalot\PdfParser\Page;
 use Smalot\PdfParser\Parser;
 
 class PdfParser
 {
-    protected array $months = [
-        "Janeiro" => "01",
-        "Fevereiro" => "02",
-        "Março" => "03",
-        "Abril" => "04",
-        "Maio" => "05",
-        "Junho" => "06",
-        "Julho" => "07",
-        "Agosto" => "08",
-        "Setembro" => "09",
-        "Outubro" => "10",
-        "Novembro" => "11",
-        "Dezembro" => "12"
-    ];
-
     protected array $weekdays = ["QUI", "SEX", "SAB", "DOM", "SEG", "TER", "QUA", "SÁB"];
 
     public function __construct(
@@ -108,7 +94,7 @@ class PdfParser
     public function addTidesOfTheDay(Location $location, int $currentKey, array &$textArray, array $meta = []): void
     {
         $day = ltrim($textArray[$currentKey], "0");
-        $month = $this->months[$meta["month"]];
+        $month = Month::get($meta["month"])->value;
         $year = $meta["year"];
         $tides = array_slice($textArray, $currentKey + 2, 4);
         $index = 0;
@@ -127,7 +113,7 @@ class PdfParser
         return match (true) {
             preg_match("/([A-ZÀ-Ú()]+ )+-.*/", $text) === 1 && str_starts_with($nextText, "Latitude") => [$this, "fillLocation"],
             str_starts_with($text, "Latitude") => "position",
-            array_key_exists($text, $this->months) => "month",
+            Month::get($text) !== false => "month",
             is_numeric($text) && in_array($nextText, $this->weekdays) => [$this, "addTidesOfTheDay"],
             preg_match("/\d{4} {3,4}-?\d{1,2}\.\d{2}/", $text) === 1 => "timetide",
             default => "unknown",
