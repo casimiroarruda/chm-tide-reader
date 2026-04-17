@@ -34,6 +34,7 @@ class PdfParser
         protected Configuration $configuration,
         protected Parser $parser
     ) {}
+
     public function getListingFiles(): array
     {
         return array_map(
@@ -110,14 +111,14 @@ class PdfParser
         $month = $this->months[$meta["month"]];
         $year = $meta["year"];
         $tides = array_slice($textArray, $currentKey + 2, 4);
-        foreach ($tides as $tide) {
-            if (preg_match("/(?P<hour>\d{2})(?P<minute>\d{2}) {3,4}(?P<height>-?\d{1,2}\.\d{1,2})/", $tide, $matches) !== 1) {
-                continue;
-            };
+        $index = 0;
+        while (isset($tides[$index]) && preg_match("/(?P<hour>\d{2})(?P<minute>\d{2}) {3,4}(?P<height>-?\d{1,2}\.\d{1,2})/", $tides[$index], $matches) === 1) {
             $time = new \DateTime("{$year}-{$month}-{$day} {$matches['hour']}:{$matches['minute']}", $location->timeZone);
             $height = (float) $matches["height"];
             $type = $height > $location->meanSeaLevel ? Type::HIGH : Type::LOW;
             $location->tides->add(new Tide($time, $height, $type));
+            $matches = [];
+            $index++;
         }
     }
 
