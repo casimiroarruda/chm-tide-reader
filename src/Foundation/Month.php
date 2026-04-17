@@ -1,6 +1,6 @@
 <?php
 
-namespace Andr\ChmTideReader\Foundation;
+namespace Andr\ChmTideExtractor\Foundation;
 
 enum Month: string
 {

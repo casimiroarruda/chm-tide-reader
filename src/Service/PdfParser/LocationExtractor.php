@@ -1,6 +1,6 @@
 <?php
 
-namespace Andr\ChmTideReader\Service\PdfParser;
+namespace Andr\ChmTideExtractor\Service\PdfParser;
 
 class LocationExtractor
 {

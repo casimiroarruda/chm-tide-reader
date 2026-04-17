@@ -1,11 +1,11 @@
 {
-    "name": "andr/chm-tide-reader",
+    "name": "andr/chm-tide-extractor",
     "description": "Lightweight application to get data from Brazilian Marine regarding of tide variance",
     "type": "project",
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "Andr\\ChmTideReader\\": "src/"
+            "Andr\\ChmTideExtractor\\": "src/"
         }
     },
     "authors": [

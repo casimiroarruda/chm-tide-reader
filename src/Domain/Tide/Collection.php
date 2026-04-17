@@ -1,8 +1,8 @@
 <?php
 
-namespace Andr\ChmTideReader\Entity\Tide;
+namespace Andr\ChmTideExtractor\Domain\Tide;
 
-use Andr\ChmTideReader\Entity\Tide;
+use Andr\ChmTideExtractor\Domain\Tide;
 use ArrayIterator, IteratorAggregate, Countable, Iterator;
 
 class Collection implements IteratorAggregate, Countable

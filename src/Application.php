@@ -1,6 +1,6 @@
 <?php
 
-namespace Andr\ChmTideReader;
+namespace Andr\ChmTideExtractor;
 
 class Application
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Andr\ChmTideReader\Entity\Tide;
+namespace Andr\ChmTideExtractor\Domain\Tide;
 
 enum Type
 {

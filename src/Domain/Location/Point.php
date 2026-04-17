@@ -1,6 +1,6 @@
 <?php
 
-namespace Andr\ChmTideReader\Entity\Location;
+namespace Andr\ChmTideExtractor\Domain\Location;
 
 class Point
 {

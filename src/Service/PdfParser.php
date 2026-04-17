@@ -1,14 +1,14 @@
 <?php
 
-namespace Andr\ChmTideReader\Service;
+namespace Andr\ChmTideExtractor\Service;
 
-use Andr\ChmTideReader\Entity\Location;
-use Andr\ChmTideReader\Entity\Location\Point;
-use Andr\ChmTideReader\Entity\Tide;
-use Andr\ChmTideReader\Entity\Tide\Type;
-use Andr\ChmTideReader\Foundation\Configuration;
-use Andr\ChmTideReader\Foundation\Month;
-use Andr\ChmTideReader\Service\PdfParser\LocationExtractor;
+use Andr\ChmTideExtractor\Domain\Location;
+use Andr\ChmTideExtractor\Domain\Location\Point;
+use Andr\ChmTideExtractor\Domain\Tide;
+use Andr\ChmTideExtractor\Domain\Tide\Type;
+use Andr\ChmTideExtractor\Foundation\Configuration;
+use Andr\ChmTideExtractor\Foundation\Month;
+use Andr\ChmTideExtractor\Service\PdfParser\LocationExtractor;
 use Smalot\PdfParser\Page;
 use Smalot\PdfParser\Parser;
 

@@ -1,8 +1,8 @@
 <?php
 
-namespace Andr\ChmTideReader\Entity;
+namespace Andr\ChmTideExtractor\Domain;
 
-use Andr\ChmTideReader\Entity\Location\Point;
+use Andr\ChmTideExtractor\Domain\Location\Point;
 use DateTimeZone;
 
 class Location

@@ -1,8 +1,8 @@
 <?php
 
-namespace Andr\ChmTideReader\Entity;
+namespace Andr\ChmTideExtractor\Domain;
 
-use Andr\ChmTideReader\Entity\Tide\Type;
+use Andr\ChmTideExtractor\Domain\Tide\Type;
 use DateTime;
 
 class Tide
