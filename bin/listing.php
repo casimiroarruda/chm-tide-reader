@@ -1,6 +1,7 @@
 <?php
 
 use Andr\ChmTideExtractor\Service\PdfParser;
+use Andr\ChmTideExtractor\Service\TideStore;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
 use Symfony\Component\Config\FileLocator;
@@ -8,13 +9,9 @@ use Symfony\Component\Dotenv\Dotenv;
 
 $baseDir = dirname(__DIR__);
 require $baseDir . '/vendor/autoload.php';
-$dotenv = new Dotenv();
-$dotenv->load($baseDir . '/.env');
+(new Dotenv())->load($baseDir . '/.env');
 
 $containerBuilder = new ContainerBuilder();
-
-$containerBuilder->setParameter('tide_pdf_path', $baseDir . "/" . ($_ENV["TIDE_PDF_PATH"] ?? "tide-pdf"));
-$containerBuilder->setParameter('year', $_ENV["YEAR"] ?? 2026);
 
 $loader = new PhpFileLoader($containerBuilder, new FileLocator($baseDir . '/config'));
 $loader->load('services.php');
@@ -22,7 +19,7 @@ $loader->load('services.php');
 $containerBuilder->compile();
 
 $pdfParser = $containerBuilder->get(PdfParser::class);
+$locations = $pdfParser($_ENV['YEAR']);
 
-$locations = $pdfParser->getListingFiles() |> $pdfParser->processFiles(...);
-
-print_r($locations[0]);
+// $tideStore = $containerBuilder->get(TideStore::class);
+// $tideStore->saveLocations(...$locations);

@@ -14,7 +14,7 @@ class LocationExtractor
         return [
             "latitude" => $this->extractLatitudeFromPageArray(),
             "longitude" => $this->extractLongitudeFromPageArray(),
-            "timeZone" => $this->extractTimeZoneFromPageArray(),
+            "timezone" => $this->extractTimeZoneFromPageArray(),
             "meanSeaLevel" => $this->extractMeanSeaLevelFromPageArray()
         ];
     }

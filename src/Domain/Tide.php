@@ -10,6 +10,7 @@ class Tide
     public function __construct(
         public DateTime $time,
         public float $height,
-        public Type $type
+        public Type $type,
+        public Location $location
     ) {}
 }

@@ -18,16 +18,25 @@ class PdfParser
 
     public function __construct(
         protected Configuration $configuration,
-        protected Parser $parser
+        protected Parser $parser,
+        protected TideStore $store
     ) {}
+
+    public function __invoke(string $year): array
+    {
+        $this->configuration->year = $year;
+        $files = $this->getListingFiles();
+        $locations = $this->processFiles($files);
+        return $locations;
+    }
 
     public function getListingFiles(): array
     {
         return array_map(
-            fn($file) => $this->configuration->tidePdfPath . "/" . $file,
+            fn($file) => $this->configuration->tidePdfPath . $this->configuration->year . "/" . $file,
             array_filter(
-                scandir($this->configuration->tidePdfPath),
-                fn($file) => is_file($this->configuration->tidePdfPath . "/" . $file)
+                scandir($this->configuration->tidePdfPath . $this->configuration->year),
+                fn($file) => is_file($this->configuration->tidePdfPath . $this->configuration->year . "/" . $file)
             )
         );
     }
@@ -37,7 +46,7 @@ class PdfParser
         return array_map(
             fn($file) => $this->processFile($file),
             $listingFiles
-        );
+        ) |> array_values(...);
     }
 
     public function processFile(string $file): Location
@@ -45,16 +54,18 @@ class PdfParser
         $pdf = $this->parser->parseFile($file);
         $location = new Location();
         $location->marineId = $this->extractMarineLocationIdFromFilename($file);
+        echo "> Parsing: " . basename($file) . PHP_EOL;
         foreach ($pdf->getPages() as $page) {
             $this->parsePage($page, $location);
         }
-        echo "[{$location->marineId}] {$location->name}" . PHP_EOL;
+        $this->store->saveLocation($location);
+        echo "    {$location->name} saved." . PHP_EOL . PHP_EOL;
         return $location;
     }
     public function extractMarineLocationIdFromFilename(string $filename): string
     {
         return
-            str_replace($this->configuration->tidePdfPath . "/", "", $filename)
+            str_replace($this->configuration->tidePdfPath . $this->configuration->year . "/", "", $filename)
             |> (fn($string) => explode(separator: "-", limit: 2, string: $string))
             |> array_first(...)
             |> trim(...);
@@ -88,7 +99,7 @@ class PdfParser
         $locationExtractor = new LocationExtractor($textArray, $currentKey + 1);
         $locationData = $locationExtractor->extract();
         $location->point = Point::fromDMS($locationData["latitude"], $locationData["longitude"]);
-        $location->timeZone = $locationData["timeZone"];
+        $location->timezone = $locationData["timezone"];
         $location->meanSeaLevel = $locationData["meanSeaLevel"];
     }
 
@@ -100,10 +111,10 @@ class PdfParser
         $tides = array_slice($textArray, $currentKey + 2, 4);
         $index = 0;
         while (isset($tides[$index]) && preg_match("/(?P<hour>\d{2})(?P<minute>\d{2}) {3,4}(?P<height>-?\d{1,2}\.\d{1,2})/", $tides[$index], $matches) === 1) {
-            $time = new \DateTime("{$year}-{$month}-{$day} {$matches['hour']}:{$matches['minute']}", $location->timeZone);
+            $time = new \DateTime("{$year}-{$month}-{$day} {$matches['hour']}:{$matches['minute']}", $location->timezone);
             $height = (float) $matches["height"];
             $type = Type::determine($height, $location->meanSeaLevel);
-            $location->tides->add(new Tide($time, $height, $type));
+            $location->tides->add(new Tide($time, $height, $type, $location));
             $matches = [];
             $index++;
         }

@@ -35,4 +35,13 @@ class Point
             self::DMS2Decimal($longitude)
         );
     }
+
+    public static function fromWKT(string $wkt): self
+    {
+        preg_match("/POINT\((?P<latitude>-?\d{1,2}\.\d{1,2})\s+(?P<longitude>-?\d{1,2}\.\d{1,2})\)/", $wkt, $matches);
+        return new self(
+            (float) $matches["longitude"],
+            (float) $matches["latitude"]
+        );
+    }
 }

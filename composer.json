@@ -16,9 +16,11 @@
     ],
     "require": {
         "php": "^8.5",
+        "ext-pdo_pgsql": "*",
         "symfony/dotenv": "^8.0",
         "symfony/dependency-injection": "^8.0",
         "symfony/config": "^8.0",
-        "smalot/pdfparser": "^2.12"
+        "smalot/pdfparser": "^2.12",
+        "robmorgan/phinx": "^0.16.11"
     }
 }
