@@ -25,32 +25,24 @@ class TideStoreTest extends TestCase
     public function testSaveLocation(): void
     {
         $location = new Location();
-        $location->tides = new Collection([]);
 
         $this->locationRepoMock->expects($this->once())
             ->method('save')
             ->with($location);
 
+        $this->tideStore->saveLocation($location);
+    }
+
+    public function testSaveLocationTides(): void
+    {
+        $location = new Location();
+        $location->tides = new Collection([]);
+
         $this->tideRepoMock->expects($this->once())
             ->method('saveCollection')
             ->with($location->tides);
 
-        $this->tideStore->saveLocation($location);
+        $this->tideStore->saveLocationTides($location);
     }
 
-    public function testSaveLocations(): void
-    {
-        $location1 = new Location();
-        $location1->tides = new Collection([]);
-        $location2 = new Location();
-        $location2->tides = new Collection([]);
-
-        $this->locationRepoMock->expects($this->exactly(2))
-            ->method('save');
-
-        $this->tideRepoMock->expects($this->exactly(2))
-            ->method('saveCollection');
-
-        $this->tideStore->saveLocations($location1, $location2);
-    }
 }

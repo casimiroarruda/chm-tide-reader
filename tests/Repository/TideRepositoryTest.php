@@ -120,16 +120,13 @@ class TideRepositoryTest extends BaseRepositoryTestCase
         $tide = new DomainTide(new DateTime("2026-01-03 00:00:00"), 1.0, Type::HIGH, $location);
         $collection = new Collection([$tide]);
 
-        try {
-            $this->repository->saveCollection($collection);
-            $this->fail("Expected PDOException was not thrown");
-        } catch (\PDOException $e) {
-            $this->assertFalse(self::$pdo->inTransaction());
-        } finally {
-            // Restart transaction for tearDown
-            if (!self::$pdo->inTransaction()) {
-                self::$pdo->beginTransaction();
-            }
+        $result = $this->repository->saveCollection($collection);
+        $this->assertFalse($result);
+        $this->assertFalse(self::$pdo->inTransaction());
+
+        // Restart transaction for tearDown
+        if (!self::$pdo->inTransaction()) {
+            self::$pdo->beginTransaction();
         }
     }
 }

@@ -21,8 +21,8 @@ class PdfParserTest extends TestCase
     {
         $this->config = new Configuration('/tmp/', '2026');
         $this->parserMock = $this->createMock(Parser::class);
-        $this->storeMock = $this->createMock(TideStore::class);
-        $this->pdfParser = new PdfParser($this->config, $this->parserMock, $this->storeMock);
+        $this->pdfParser = new PdfParser($this->parserMock);
+        $this->pdfParser->configure($this->config);
     }
 
     public function testExtractMarineLocationIdFromFilename(): void
@@ -133,7 +133,8 @@ class PdfParserTest extends TestCase
         touch($tempDir . '/2026/2-Test.pdf');
 
         $config = new Configuration($tempDir . '/', '2026');
-        $pdfParser = new PdfParser($config, $this->parserMock, $this->storeMock);
+        $pdfParser = new PdfParser($this->parserMock);
+        $pdfParser->configure($config);
 
         $files = $pdfParser->getListingFiles();
 
@@ -150,9 +151,10 @@ class PdfParserTest extends TestCase
     public function testProcessFiles(): void
     {
         $pdfParser = $this->getMockBuilder(PdfParser::class)
-            ->setConstructorArgs([$this->config, $this->parserMock, $this->storeMock])
+            ->setConstructorArgs([$this->parserMock])
             ->onlyMethods(['processFile'])
             ->getMock();
+        $pdfParser->configure($this->config);
 
         $location1 = new Location();
         $location1->name = "Port 1";
@@ -170,19 +172,24 @@ class PdfParserTest extends TestCase
         $this->assertEquals("Port 2", $results[1]->name);
     }
 
-    public function testInvoke(): void
+    public function testFromCommand(): void
     {
         $pdfParser = $this->getMockBuilder(PdfParser::class)
-            ->setConstructorArgs([$this->config, $this->parserMock, $this->storeMock])
-            ->onlyMethods(['getListingFiles', 'processFiles'])
+            ->setConstructorArgs([$this->parserMock])
+            ->onlyMethods(['getListingFiles', 'processFile'])
             ->getMock();
+        $pdfParser->configure($this->config);
+
+        $location1 = new Location();
 
         $pdfParser->expects($this->once())->method('getListingFiles')->willReturn(['file1.pdf']);
-        $pdfParser->expects($this->once())->method('processFiles')->with(['file1.pdf'])->willReturn([]);
+        $pdfParser->expects($this->once())->method('processFile')->with('file1.pdf')->willReturn($location1);
 
-        $results = $pdfParser("2026");
-        $this->assertEquals([], $results);
-        $this->assertEquals("2026", $this->config->year);
+        $generator = $pdfParser->fromCommand();
+        $results = iterator_to_array($generator);
+
+        $this->assertCount(1, $results);
+        $this->assertSame($location1, $results[0]);
     }
 
     public function testProcessFile(): void
