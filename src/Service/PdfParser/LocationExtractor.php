@@ -21,13 +21,13 @@ class LocationExtractor
 
     public function extractLatitudeFromPageArray(): string
     {
-        preg_match("/Latitude (?P<latitude>\d{1,2}°\s?\d{1,2}&#39;\.?\d?\s[NSWE])/", $this->pageArray[$this->index], $matches);
+        preg_match("/Latitude (?P<latitude>\d{1,2}°\s?\d{1,2}(&#39;|')\.?\d?\s[NSWE])/", $this->pageArray[$this->index], $matches);
         return str_replace("&#39;", "'", $matches["latitude"]);
     }
 
     public function extractLongitudeFromPageArray(): string
     {
-        while (preg_match("/Longitude (?P<longitude>\d{1,2}°\s?\d{1,2}&#39;\.?\d?\s[NSWE])/", $this->pageArray[$this->index], $matches) !== 1) {
+        while (preg_match("/Longitude (?P<longitude>\d{1,2}°\s?\d{1,2}(&#39;|')\.?\d?\s[NSWE])/", $this->pageArray[$this->index], $matches) !== 1) {
             $this->index++;
         }
         return str_replace("&#39;", "'", $matches["longitude"]);

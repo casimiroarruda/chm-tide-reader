@@ -21,7 +21,7 @@ class Tide
         return $tide;
     }
 
-    public function saveCollection(Collection $tides): void
+    public function saveCollection(Collection $tides, ?callable $callback = null): bool
     {
         $startedTransaction = false;
         if (!$this->pdo->inTransaction()) {
@@ -31,9 +31,6 @@ class Tide
 
         $statement = $this->pdo->prepare("INSERT INTO tide (location_id, time, height, type) VALUES (:location_id, :time, :height, :type) ON CONFLICT (location_id, time) DO NOTHING");
         try {
-            $tidesCount = count($tides);
-            echo "    Saving " . $tidesCount . " tide data: ";
-            $tenPercentStep = ceil($tidesCount / 10);
             foreach ($tides as $key => $tide) {
                 $params = [
                     "location_id" => $tide->location->id,
@@ -42,8 +39,8 @@ class Tide
                     "type" => $tide->type->name
                 ];
                 $statement->execute($params);
-                if ($tenPercentStep > 0 && $key % $tenPercentStep == 0) {
-                    echo ".";
+                if ($callback) {
+                    $callback();
                 }
             }
             if ($startedTransaction) {
@@ -52,9 +49,11 @@ class Tide
         } catch (\PDOException $e) {
             if ($startedTransaction) {
                 $this->pdo->rollBack();
+                return false;
             }
             throw $e;
         }
-        echo " Done!" . PHP_EOL;
+
+        return true;
     }
 }

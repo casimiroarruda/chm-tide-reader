@@ -70,10 +70,7 @@ class Location
             'timezone' => $location->timezone->getName(),
             'id' => $location->id,
         ]);
-        if (!$result) {
-            return false;
-        }
-        return $location;
+        return $location ?? false;
     }
 
     public function save(DomainLocation $location): DomainLocation|false

@@ -9,25 +9,33 @@ use Andr\ChmTideExtractor\Domain\Tide\Type;
 use Andr\ChmTideExtractor\Foundation\Configuration;
 use Andr\ChmTideExtractor\Foundation\Month;
 use Andr\ChmTideExtractor\Service\PdfParser\LocationExtractor;
+use Generator;
 use Smalot\PdfParser\Page;
 use Smalot\PdfParser\Parser;
 
 class PdfParser
 {
     protected array $weekdays = ["QUI", "SEX", "SAB", "DOM", "SEG", "TER", "QUA", "SÁB"];
+    protected Configuration $configuration;
 
     public function __construct(
-        protected Configuration $configuration,
-        protected Parser $parser,
-        protected TideStore $store
+        protected Parser $parser
     ) {}
 
-    public function __invoke(string $year): array
+    public function configure(Configuration $configuration): void
     {
-        $this->configuration->year = $year;
+        $this->configuration = $configuration;
+    }
+
+    public function fromCommand(): Generator
+    {
+        if (!isset($this->configuration)) {
+            throw new \Exception("Configuration not set");
+        }
         $files = $this->getListingFiles();
-        $locations = $this->processFiles($files);
-        return $locations;
+        foreach ($files as $file) {
+            yield $this->processFile($file);
+        }
     }
 
     public function getListingFiles(): array
@@ -43,6 +51,9 @@ class PdfParser
 
     public function processFiles(array $listingFiles): array
     {
+        if (!isset($this->configuration)) {
+            throw new \Exception("Configuration not set");
+        }
         return array_map(
             fn($file) => $this->processFile($file),
             $listingFiles
@@ -54,18 +65,17 @@ class PdfParser
         $pdf = $this->parser->parseFile($file);
         $location = new Location();
         $location->marineId = $this->extractMarineLocationIdFromFilename($file);
-        echo "> Parsing: " . basename($file) . PHP_EOL;
         foreach ($pdf->getPages() as $page) {
             $this->parsePage($page, $location);
         }
-        $this->store->saveLocation($location);
-        echo "    {$location->name} saved." . PHP_EOL . PHP_EOL;
         return $location;
     }
+
+
     public function extractMarineLocationIdFromFilename(string $filename): string
     {
         return
-            str_replace($this->configuration->tidePdfPath . $this->configuration->year . "/", "", $filename)
+            basename($filename)
             |> (fn($string) => explode(separator: "-", limit: 2, string: $string))
             |> array_first(...)
             |> trim(...);
