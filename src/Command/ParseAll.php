@@ -2,6 +2,7 @@
 
 namespace Andr\ChmTideExtractor\Command;
 
+use Andr\ChmTideExtractor\Foundation\Configuration;
 use Andr\ChmTideExtractor\Service\PdfParser;
 use Andr\ChmTideExtractor\Service\TideStore;
 use Symfony\Component\Console\Attribute\Argument;
@@ -17,7 +18,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
     help: 'This command will parse all the tide PDFs and store them in the database.',
     usages: ['2026']
 )]
-class Parse extends Command
+class ParseAll extends Command
 {
     public function __construct(
         private readonly PdfParser $pdfParser,
@@ -32,7 +33,9 @@ class Parse extends Command
         OutputInterface $output,
         SymfonyStyle $io
     ): int {
-        $iterator = $this->pdfParser->fromCommand($year);
+        $configuration = new Configuration(dirname(__DIR__) . '/' . $_ENV['TIDE_PDF_PATH'], $year);
+        $this->pdfParser->configure($configuration);
+        $iterator = $this->pdfParser->fromCommand();
         $io->title("Parsing Tide files from Marinha do Brasil");
         foreach ($iterator as $location) {
             $io->section("> " . $location->name);
