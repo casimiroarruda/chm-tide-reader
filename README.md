@@ -26,6 +26,7 @@ Utilizamos o **PHPUnit 13.1** e a cobertura de código é extensa:
 - **Domínios e Entidades** (`Tide`, `Month`, `Collection`): **100%** de cobertura.
 - **Serviços** (`PdfParser`, `LocationExtractor`, `TideStore`): **100%** de cobertura, garantindo que a lógica de extração funcione em todos os cenários conhecidos.
 - **Repositórios** (`Tide`, `Location`): Totalmente cobertos com testes de integração (~95-100%) para atestar o salvamento correto no PostGIS e uso do PDO.
+- **Comandos (`ParseAll`, `ParseOne`)**: **100%** de cobertura da interface de linha de comando.
 
 ## 🚀 Como Configurar e Executar
 
@@ -46,7 +47,20 @@ Utilizamos o **PHPUnit 13.1** e a cobertura de código é extensa:
    vendor/bin/phinx migrate
    ```
 
-4. **Rodando os Testes:**
+4. **Executando o Parser:**
+   O projeto conta com comandos de console construídos com Symfony Console para facilitar a extração dos dados.
+   
+   Para processar um único PDF:
+   ```bash
+   bin/console tide:parse 2026 ./resources/tide-pdf/2026/arquivo.pdf
+   ```
+
+   Para processar todos os PDFs de um determinado ano listados no diretório configurado:
+   ```bash
+   bin/console tide:parse-all 2026
+   ```
+
+5. **Rodando os Testes:**
    ```bash
    vendor/bin/phpunit
    ```
@@ -79,6 +93,7 @@ We use **PHPUnit 13.1** and the code coverage is extensive:
 - **Domains and Entities** (`Tide`, `Month`, `Collection`): **100%** coverage.
 - **Services** (`PdfParser`, `LocationExtractor`, `TideStore`): **100%** coverage, verifying extraction logic works under all known scenarios.
 - **Repositories** (`Tide`, `Location`): Completely covered with integration tests (~95-100%) to ensure correct persistence via PDO and PostGIS.
+- **Commands (`ParseAll`, `ParseOne`)**: **100%** coverage of the command-line interface.
 
 ## 🚀 Setup & Execution
 
@@ -99,7 +114,20 @@ We use **PHPUnit 13.1** and the code coverage is extensive:
    vendor/bin/phinx migrate
    ```
 
-4. **Running Tests:**
+4. **Running the Parser:**
+   The project includes console commands built with Symfony Console to easily extract the data.
+   
+   To parse a single PDF file:
+   ```bash
+   bin/console tide:parse 2026 ./resources/tide-pdf/2026/file.pdf
+   ```
+
+   To parse all PDFs for a specific year located in the configured directory:
+   ```bash
+   bin/console tide:parse-all 2026
+   ```
+
+5. **Running Tests:**
    ```bash
    vendor/bin/phpunit
    ```
