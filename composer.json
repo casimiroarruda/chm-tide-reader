@@ -8,6 +8,11 @@
             "Andr\\ChmTideExtractor\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Andr\\ChmTideExtractor\\Tests\\": "tests/"
+        }
+    },
     "authors": [
         {
             "name": "Anderson Casimiro",
@@ -22,5 +27,8 @@
         "symfony/config": "^8.0",
         "smalot/pdfparser": "^2.12",
         "robmorgan/phinx": "^0.16.11"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^13.1"
     }
 }

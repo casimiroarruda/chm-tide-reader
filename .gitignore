@@ -1,3 +1,5 @@
 .env
 resources/tide-pdf/**/*.pdf
-vendor/*
+vendor
+.phpunit.cache
+.vscode

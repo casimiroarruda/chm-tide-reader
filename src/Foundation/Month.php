@@ -19,10 +19,10 @@ enum Month: string
 
     public static function get(string $month): self|false
     {
-        return match ($month) {
+        return match (mb_convert_case($month, MB_CASE_TITLE, "UTF-8")) {
             "Janeiro" => self::Janeiro,
             "Fevereiro" => self::Fevereiro,
-            "Março" => self::Marco,
+            "Março", "Marco" => self::Marco,
             "Abril" => self::Abril,
             "Maio" => self::Maio,
             "Junho" => self::Junho,

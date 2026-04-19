@@ -5,13 +5,13 @@ namespace Andr\ChmTideExtractor\Domain\Location;
 class Point
 {
     public function __construct(
-        public float $latitude,
-        public float $longitude
+        public float $longitude,
+        public float $latitude
     ) {}
 
     public function __toString(): string
     {
-        return "{$this->latitude} {$this->longitude}";
+        return "{$this->longitude} {$this->latitude}";
     }
 
     public static function DMS2Decimal(string $string): float
@@ -28,17 +28,17 @@ class Point
         return $decimal;
     }
 
-    public static function fromDMS(string $latitude, string $longitude): self
+    public static function fromDMS(string $longitude, string $latitude): self
     {
         return new self(
+            self::DMS2Decimal($longitude),
             self::DMS2Decimal($latitude),
-            self::DMS2Decimal($longitude)
         );
     }
 
     public static function fromWKT(string $wkt): self
     {
-        preg_match("/POINT\((?P<latitude>-?\d{1,2}\.\d{1,2})\s+(?P<longitude>-?\d{1,2}\.\d{1,2})\)/", $wkt, $matches);
+        preg_match("/POINT\((?P<longitude>-?\d+\.?\d*)\s+(?P<latitude>-?\d+\.?\d*)\)/", $wkt, $matches);
         return new self(
             (float) $matches["longitude"],
             (float) $matches["latitude"]

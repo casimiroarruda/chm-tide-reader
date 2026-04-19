@@ -23,7 +23,12 @@ class Tide
 
     public function saveCollection(Collection $tides): void
     {
-        $this->pdo->beginTransaction();
+        $startedTransaction = false;
+        if (!$this->pdo->inTransaction()) {
+            $this->pdo->beginTransaction();
+            $startedTransaction = true;
+        }
+
         $statement = $this->pdo->prepare("INSERT INTO tide (location_id, time, height, type) VALUES (:location_id, :time, :height, :type) ON CONFLICT (location_id, time) DO NOTHING");
         try {
             $tidesCount = count($tides);
@@ -37,15 +42,19 @@ class Tide
                     "type" => $tide->type->name
                 ];
                 $statement->execute($params);
-                if ($key % $tenPercentStep == 0) {
+                if ($tenPercentStep > 0 && $key % $tenPercentStep == 0) {
                     echo ".";
                 }
             }
+            if ($startedTransaction) {
+                $this->pdo->commit();
+            }
         } catch (\PDOException $e) {
-            $this->pdo->rollBack();
+            if ($startedTransaction) {
+                $this->pdo->rollBack();
+            }
             throw $e;
         }
         echo " Done!" . PHP_EOL;
-        $this->pdo->commit();
     }
 }

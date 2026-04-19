@@ -98,7 +98,7 @@ class PdfParser
         $location->name = str_replace(" - " . date("Y"), "", $textArray[$currentKey]);
         $locationExtractor = new LocationExtractor($textArray, $currentKey + 1);
         $locationData = $locationExtractor->extract();
-        $location->point = Point::fromDMS($locationData["latitude"], $locationData["longitude"]);
+        $location->point = Point::fromDMS($locationData["longitude"], $locationData["latitude"]);
         $location->timezone = $locationData["timezone"];
         $location->meanSeaLevel = $locationData["meanSeaLevel"];
     }

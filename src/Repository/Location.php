@@ -16,10 +16,10 @@ class Location
     {
         $query = $this->pdo->prepare(
             "SELECT id,
-                    marine_id as marineId, 
+                    marine_id as \"marineId\", 
                     name, 
                     ST_AsText(point) as point, 
-                    mean_sea_level as meanSeaLevel, 
+                    mean_sea_level as \"meanSeaLevel\", 
                     timezone
                FROM location 
               WHERE marine_id = :marine_id"
@@ -80,6 +80,7 @@ class Location
     {
         $findByMarineId = $this->findByMarineId($location->marineId);
         if ($findByMarineId !== null) {
+            $location->id = $findByMarineId->id;
             return $this->update($location);
         }
         return $this->insert($location);

@@ -1,5 +1,13 @@
 <?php
 
+use Symfony\Component\Dotenv\Dotenv;
+
+require __DIR__ . '/vendor/autoload.php';
+
+if (file_exists(__DIR__ . '/.env')) {
+    (new Dotenv())->load(__DIR__ . '/.env');
+}
+
 return
     [
         'paths' => [
@@ -8,30 +16,12 @@ return
         ],
         'environments' => [
             'default_migration_table' => 'phinxlog',
-            'default_environment' => 'development',
+            'default_environment' => 'production',
             'production' => [
                 'adapter' => 'pgsql',
-                'dsn' => '%%PHINX_DBDSN%%',
-                'schema' => '%%PHINX_DBSCHEMA%%'
+                'dsn' => $_ENV['PHINX_DBDSN'] ?? null,
+                'schema' => $_ENV['PHINX_DBSCHEMA'] ?? 'public'
             ],
-            'development' => [
-                'adapter' => 'mysql',
-                'host' => 'localhost',
-                'name' => 'development_db',
-                'user' => 'root',
-                'pass' => '',
-                'port' => '3306',
-                'charset' => 'utf8',
-            ],
-            'testing' => [
-                'adapter' => 'mysql',
-                'host' => 'localhost',
-                'name' => 'testing_db',
-                'user' => 'root',
-                'pass' => '',
-                'port' => '3306',
-                'charset' => 'utf8',
-            ]
         ],
         'version_order' => 'creation'
     ];
