@@ -1,17 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1776609741">
-  <project timestamp="1776609741" name="Clover Coverage">
-    <package name="Andr\ChmTideExtractor">
-      <file name="/home/andr/Code/php/chm-tide-reader/src/Application.php">
-        <class name="Andr\ChmTideExtractor\Application" namespace="Andr\ChmTideExtractor">
-          <metrics complexity="2" methods="2" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="2" coveredstatements="0" elements="4" coveredelements="0"/>
-        </class>
-        <line num="7" type="method" name="__construct" visibility="public" complexity="1" crap="2" count="0"/>
-        <line num="9" type="stmt" count="0"/>
-        <line num="11" type="method" name="run" visibility="public" complexity="1" crap="2" count="0"/>
-        <metrics loc="13" ncloc="13" classes="1" methods="2" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="2" coveredstatements="0" elements="4" coveredelements="0"/>
-      </file>
-    </package>
+<coverage generated="1776611596">
+  <project timestamp="1776611596" name="Clover Coverage">
     <package name="Andr\ChmTideExtractor\Domain">
       <file name="/home/andr/Code/php/chm-tide-reader/src/Domain/Location.php">
         <class name="Andr\ChmTideExtractor\Domain\Location" namespace="Andr\ChmTideExtractor\Domain">
@@ -358,6 +347,6 @@
         <metrics loc="56" ncloc="56" classes="1" methods="6" coveredmethods="6" conditionals="0" coveredconditionals="0" statements="22" coveredstatements="22" elements="28" coveredelements="28"/>
       </file>
     </package>
-    <metrics files="13" loc="579" ncloc="579" classes="13" methods="44" coveredmethods="40" conditionals="0" coveredconditionals="0" statements="221" coveredstatements="217" elements="265" coveredelements="257"/>
+    <metrics files="12" loc="566" ncloc="566" classes="12" methods="42" coveredmethods="40" conditionals="0" coveredconditionals="0" statements="219" coveredstatements="217" elements="261" coveredelements="257"/>
   </project>
 </coverage>

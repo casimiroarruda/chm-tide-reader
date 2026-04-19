@@ -3,3 +3,4 @@ resources/tide-pdf/**/*.pdf
 vendor
 .phpunit.cache
 .vscode
+var/log

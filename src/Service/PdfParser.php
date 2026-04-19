@@ -9,6 +9,7 @@ use Andr\ChmTideExtractor\Domain\Tide\Type;
 use Andr\ChmTideExtractor\Foundation\Configuration;
 use Andr\ChmTideExtractor\Foundation\Month;
 use Andr\ChmTideExtractor\Service\PdfParser\LocationExtractor;
+use Generator;
 use Smalot\PdfParser\Page;
 use Smalot\PdfParser\Parser;
 
@@ -18,16 +19,16 @@ class PdfParser
 
     public function __construct(
         protected Configuration $configuration,
-        protected Parser $parser,
-        protected TideStore $store
+        protected Parser $parser
     ) {}
 
-    public function __invoke(string $year): array
+    public function fromCommand(string $year): Generator
     {
         $this->configuration->year = $year;
         $files = $this->getListingFiles();
-        $locations = $this->processFiles($files);
-        return $locations;
+        foreach ($files as $file) {
+            yield $this->processFile($file);
+        }
     }
 
     public function getListingFiles(): array
@@ -54,14 +55,13 @@ class PdfParser
         $pdf = $this->parser->parseFile($file);
         $location = new Location();
         $location->marineId = $this->extractMarineLocationIdFromFilename($file);
-        echo "> Parsing: " . basename($file) . PHP_EOL;
         foreach ($pdf->getPages() as $page) {
             $this->parsePage($page, $location);
         }
-        $this->store->saveLocation($location);
-        echo "    {$location->name} saved." . PHP_EOL . PHP_EOL;
         return $location;
     }
+
+
     public function extractMarineLocationIdFromFilename(string $filename): string
     {
         return

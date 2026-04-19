@@ -2,6 +2,7 @@
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
+use Andr\ChmTideExtractor\Command\Parse;
 use Andr\ChmTideExtractor\Foundation\Configuration;
 use Andr\ChmTideExtractor\Repository\Location;
 use Andr\ChmTideExtractor\Repository\Tide;
@@ -9,6 +10,7 @@ use Andr\ChmTideExtractor\Service\PdfParser;
 use Andr\ChmTideExtractor\Service\TideStore;
 use Smalot\PdfParser\Parser;
 use PDO;
+use Symfony\Component\Console\Application;
 
 return function (ContainerConfigurator $container): void {
     $services = $container->services();
@@ -35,8 +37,7 @@ return function (ContainerConfigurator $container): void {
 
     $services->set(PdfParser::class)
         ->arg('$configuration', service(Configuration::class))
-        ->arg('$parser', service(Parser::class))
-        ->arg('$store', service(TideStore::class));
+        ->arg('$parser', service(Parser::class));
 
     $services->set('pdo', PDO::class)
         ->arg('$dsn', param('db_dsn'))
@@ -53,4 +54,10 @@ return function (ContainerConfigurator $container): void {
     $services->set(TideStore::class)
         ->arg('$locationRepository', service(Location::class))
         ->arg('$tideRepository', service(Tide::class));
+
+    $services->set(Parse::class)
+        ->arg('$pdfParser', service(PdfParser::class))
+        ->arg('$store', service(TideStore::class));
+    $services->set('app', Application::class)
+        ->call('addCommand', [service(Parse::class)]);
 };

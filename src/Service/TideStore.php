@@ -13,13 +13,13 @@ class TideStore
         private TideRepository $tideRepository
     ) {}
 
-    public function saveLocations(Location ...$locations): void
+    public function saveLocation(Location $location): Location|false
     {
-        array_walk($locations, [$this,  'saveLocation']);
+        return $this->locationRepository->save($location);
     }
-    public function saveLocation(Location $location): void
+
+    public function saveLocationTides(Location $location, ?callable $callback = null): bool
     {
-        $this->locationRepository->save($location);
-        $this->tideRepository->saveCollection($location->tides);
+        return $this->tideRepository->saveCollection($location->tides, $callback);
     }
 }
