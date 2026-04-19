@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1776607516">
-  <project timestamp="1776607516" name="Clover Coverage">
+<coverage generated="1776609741">
+  <project timestamp="1776609741" name="Clover Coverage">
     <package name="Andr\ChmTideExtractor">
       <file name="/home/andr/Code/php/chm-tide-reader/src/Application.php">
         <class name="Andr\ChmTideExtractor\Application" namespace="Andr\ChmTideExtractor">
@@ -104,25 +104,25 @@
       </file>
       <file name="/home/andr/Code/php/chm-tide-reader/src/Foundation/Month.php">
         <class name="Andr\ChmTideExtractor\Foundation\Month" namespace="Andr\ChmTideExtractor\Foundation">
-          <metrics complexity="14" methods="1" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="15" coveredstatements="9" elements="16" coveredelements="9"/>
+          <metrics complexity="14" methods="1" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="15" coveredstatements="15" elements="16" coveredelements="16"/>
         </class>
-        <line num="20" type="method" name="get" visibility="public" complexity="14" crap="26.54" count="17"/>
-        <line num="22" type="stmt" count="17"/>
+        <line num="20" type="method" name="get" visibility="public" complexity="14" crap="14" count="23"/>
+        <line num="22" type="stmt" count="23"/>
         <line num="23" type="stmt" count="5"/>
         <line num="24" type="stmt" count="1"/>
         <line num="25" type="stmt" count="2"/>
-        <line num="26" type="stmt" count="0"/>
-        <line num="27" type="stmt" count="0"/>
-        <line num="28" type="stmt" count="0"/>
-        <line num="29" type="stmt" count="0"/>
-        <line num="30" type="stmt" count="0"/>
+        <line num="26" type="stmt" count="1"/>
+        <line num="27" type="stmt" count="1"/>
+        <line num="28" type="stmt" count="1"/>
+        <line num="29" type="stmt" count="1"/>
+        <line num="30" type="stmt" count="1"/>
         <line num="31" type="stmt" count="1"/>
         <line num="32" type="stmt" count="1"/>
-        <line num="33" type="stmt" count="0"/>
+        <line num="33" type="stmt" count="1"/>
         <line num="34" type="stmt" count="1"/>
-        <line num="35" type="stmt" count="17"/>
-        <line num="36" type="stmt" count="17"/>
-        <metrics loc="39" ncloc="39" classes="1" methods="1" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="15" coveredstatements="9" elements="16" coveredelements="9"/>
+        <line num="35" type="stmt" count="23"/>
+        <line num="36" type="stmt" count="23"/>
+        <metrics loc="39" ncloc="39" classes="1" methods="1" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="15" coveredstatements="15" elements="16" coveredelements="16"/>
       </file>
     </package>
     <package name="Andr\ChmTideExtractor\Repository">
@@ -358,6 +358,6 @@
         <metrics loc="56" ncloc="56" classes="1" methods="6" coveredmethods="6" conditionals="0" coveredconditionals="0" statements="22" coveredstatements="22" elements="28" coveredelements="28"/>
       </file>
     </package>
-    <metrics files="13" loc="579" ncloc="579" classes="13" methods="44" coveredmethods="39" conditionals="0" coveredconditionals="0" statements="221" coveredstatements="211" elements="265" coveredelements="250"/>
+    <metrics files="13" loc="579" ncloc="579" classes="13" methods="44" coveredmethods="40" conditionals="0" coveredconditionals="0" statements="221" coveredstatements="217" elements="265" coveredelements="257"/>
   </project>
 </coverage>
