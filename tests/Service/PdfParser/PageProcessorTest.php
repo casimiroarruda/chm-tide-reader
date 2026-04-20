@@ -27,16 +27,16 @@ class PageProcessorTest extends TestCase
     }
 
     #[\PHPUnit\Framework\Attributes\DataProvider('discoverTypeProvider')]
-    public function testDiscoverType(string $text, string $nextText, string|array $expectedType): void
+    public function testDiscoverType(string $text, string $nextText, ?array $expectedType): void
     {
         $processor = $this->getProcessor(null);
         $type = $processor->discoverType($text, $nextText);
 
-        if (is_array($expectedType)) {
+        if ($expectedType !== null) {
             $this->assertIsCallable($type);
             $this->assertEquals($expectedType[1], $type[1]);
         } else {
-            $this->assertEquals($expectedType, $type);
+            $this->assertNull($type);
         }
     }
 
@@ -44,11 +44,11 @@ class PageProcessorTest extends TestCase
     {
         return [
             'Location header' => ['PORTO DE TESTE - 2026', 'Latitude 01', ['any', 'fillLocation']],
-            'Latitude' => ['Latitude 01', 'Longitude 02', 'position'],
-            'Month' => ['JANEIRO', '01', 'month'],
+            'Latitude' => ['Latitude 01', 'Longitude 02', null],
+            'Month' => ['Janeiro', '01', ['any', 'setCurrentMonth']],
             'Tide data' => ['01', 'SEG', ['any', 'addTidesOfTheDay']],
-            'Time Tide' => ['0123    1.55', 'Some other', 'timetide'],
-            'Unknown' => ['Some random text', 'Other text', 'unknown'],
+            'Time Tide' => ['0123    1.55', 'Some other', null],
+            'Unknown' => ['Some random text', 'Other text', null],
         ];
     }
 
@@ -100,7 +100,7 @@ class PageProcessorTest extends TestCase
 
         $textArray = [
             "PORTO DE TESTE - 2026",
-            "JANEIRO",
+            "Janeiro",
             "01",
             "SEG",
             "0123    2.10",
@@ -130,7 +130,7 @@ class PageProcessorTest extends TestCase
         $this->location->meanSeaLevel = 1.55;
 
         $textArray = [
-            "JANEIRO",
+            "Janeiro",
             "01",
             "SEG",
             "INVALID DATA"
@@ -151,7 +151,7 @@ class PageProcessorTest extends TestCase
             "Longitude 39° 55&#39;.0 W",
             "Fuso UTC -03.0 horas",
             "Nível médio 1.55 m",
-            "JANEIRO",
+            "Janeiro",
             "01",
             "SEG",
             "0123    2.10"

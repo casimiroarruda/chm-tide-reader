@@ -6,7 +6,7 @@ use Andr\ChmTideExtractor\Domain\Tide;
 use ArrayIterator, IteratorAggregate, Countable, Iterator;
 
 /**
- * @implements IteratorAggregate<int, Tide>
+ * @implements IteratorAggregate<Tide>
  */
 class Collection implements IteratorAggregate, Countable
 {

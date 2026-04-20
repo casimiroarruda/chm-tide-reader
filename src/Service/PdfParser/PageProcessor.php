@@ -3,7 +3,6 @@
 namespace Andr\ChmTideExtractor\Service\PdfParser;
 
 use Andr\ChmTideExtractor\Domain\Location;
-use Andr\ChmTideExtractor\Domain\Location\Point;
 use Andr\ChmTideExtractor\Domain\Tide;
 use Andr\ChmTideExtractor\Domain\Tide\Type;
 use Andr\ChmTideExtractor\Foundation\Month;
@@ -15,12 +14,16 @@ class PageProcessor
     /** @var array<string> */
     private array $weekdays = ["QUI", "SEX", "SAB", "DOM", "SEG", "TER", "QUA", "SÁB"];
     private Month $month;
+    /**  @var array<string> */
+    private array $months;
 
     public function __construct(
         private Page $page,
         private Location $location,
         private string $year,
-    ) {}
+    ) {
+        $this->months = array_column(Month::cases(), 'name');
+    }
 
     public function process(): void
     {
@@ -30,9 +33,6 @@ class PageProcessor
                 return;
             }
             $type = $this->discoverType($value, $textArray[$key + 1]);
-            if ($type === "month") {
-                $this->month = Month::get($value);
-            }
 
             if (is_callable($type)) {
                 $type($key, $textArray);
@@ -40,16 +40,21 @@ class PageProcessor
         });
     }
 
-    public function discoverType(string $text, string $nextText): string|callable
+    public function discoverType(string $text, string $nextText): ?callable
     {
         return match (true) {
             preg_match("/([A-ZÀ-Ú()]+ )+-.*/", $text) === 1 && str_starts_with($nextText, "Latitude") => [$this, "fillLocation"],
-            str_starts_with($text, "Latitude") => "position",
-            Month::get($text) !== false => "month",
+            in_array($text, $this->months) => [$this, 'setCurrentMonth'],
             is_numeric($text) && in_array($nextText, $this->weekdays) => [$this, "addTidesOfTheDay"],
-            preg_match("/\d{4} {3,4}-?\d{1,2}\.\d{2}/", $text) === 1 => "timetide",
-            default => "unknown",
+            default => null,
         };
+    }
+
+    /** @param array<string> &$textArray */
+    public function setCurrentMonth(int $currentKey, array &$textArray): Month
+    {
+        $this->month = Month::{$textArray[$currentKey]};
+        return $this->month;
     }
 
     /** @param array<string> &$textArray */
@@ -66,11 +71,17 @@ class PageProcessor
     public function addTidesOfTheDay(int $currentKey, array &$textArray): void
     {
         $day = ltrim($textArray[$currentKey], "0");
+
+        if (!isset($this->month)) {
+            throw new \Exception("Month not set!");
+        }
+
         $month = $this->month->value;
         $year = $this->year;
         $tideDataIndex = $currentKey + 2;
         while (isset($textArray[$tideDataIndex]) && preg_match("/(?P<hour>\d{2})(?P<minute>\d{2})\s+(?P<height>-?\d{1,2}\.\d{1,2})/", $textArray[$tideDataIndex], $matches) === 1) {
-            $time = new \DateTime("{$year}-{$month}-{$day} {$matches['hour']}:{$matches['minute']}", $this->location->timezone);
+            $tz = $this->location->timezone instanceof \DateTimeZone ? $this->location->timezone : null;
+            $time = new \DateTime("{$year}-{$month}-{$day} {$matches['hour']}:{$matches['minute']}", $tz);
             $height = (float) $matches["height"];
             $type = Type::determine($height, (float) $this->location->meanSeaLevel);
             $this->location->tides->add(new Tide($time, $height, $type, $this->location));

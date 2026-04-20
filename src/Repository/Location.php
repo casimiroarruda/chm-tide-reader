@@ -3,8 +3,6 @@
 namespace Andr\ChmTideExtractor\Repository;
 
 use Andr\ChmTideExtractor\Domain\Location as DomainLocation;
-use Andr\ChmTideExtractor\Domain\Location\Point;
-use DateTimeZone;
 
 class Location
 {
@@ -41,7 +39,7 @@ class Location
             'name' => $location->name,
             'point' => "POINT($location->point)",
             'mean_sea_level' => $location->meanSeaLevel,
-            'timezone' => $location->timezone->getName(),
+            'timezone' => $location->timezone instanceof \DateTimeZone ? $location->timezone->getName() : "-03:00",
         ]);
         if (!$result) {
             return false;
@@ -67,7 +65,7 @@ class Location
             'name' => $location->name,
             'point' => "POINT($location->point)",
             'mean_sea_level' => $location->meanSeaLevel,
-            'timezone' => $location->timezone->getName(),
+            'timezone' => $location->timezone instanceof \DateTimeZone ? $location->timezone->getName() : "-03:00",
             'id' => $location->id,
         ]);
         if (!$result) {
