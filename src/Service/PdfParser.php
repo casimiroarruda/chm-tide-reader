@@ -118,15 +118,14 @@ class PdfParser
         $day = ltrim($textArray[$currentKey], "0");
         $month = Month::get($meta["month"])->value;
         $year = $meta["year"];
-        $tides = array_slice($textArray, $currentKey + 2, 4);
-        $index = 0;
-        while (isset($tides[$index]) && preg_match("/(?P<hour>\d{2})(?P<minute>\d{2}) {3,4}(?P<height>-?\d{1,2}\.\d{1,2})/", $tides[$index], $matches) === 1) {
+        $tideDataIndex = $currentKey + 2;
+        while (isset($textArray[$tideDataIndex]) && preg_match("/(?P<hour>\d{2})(?P<minute>\d{2})\s+(?P<height>-?\d{1,2}\.\d{1,2})/", $textArray[$tideDataIndex], $matches) === 1) {
             $time = new \DateTime("{$year}-{$month}-{$day} {$matches['hour']}:{$matches['minute']}", $location->timezone);
             $height = (float) $matches["height"];
             $type = Type::determine($height, $location->meanSeaLevel);
             $location->tides->add(new Tide($time, $height, $type, $location));
             $matches = [];
-            $index++;
+            $tideDataIndex++;
         }
     }
 
