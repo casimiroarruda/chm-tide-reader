@@ -22,7 +22,8 @@ class ParseAll extends Command
 {
     public function __construct(
         private readonly PdfParser $pdfParser,
-        private readonly TideStore $store
+        private readonly TideStore $store,
+        private readonly string $tidePdfPath
     ) {
         parent::__construct();
     }
@@ -33,7 +34,7 @@ class ParseAll extends Command
         OutputInterface $output,
         SymfonyStyle $io
     ): int {
-        $configuration = new Configuration(dirname(__DIR__) . '/' . $_ENV['TIDE_PDF_PATH'], (string) $year);
+        $configuration = new Configuration($this->tidePdfPath, (string) $year);
         $this->pdfParser->configure($configuration);
         $iterator = $this->pdfParser->fromCommand();
         $io->title("Parsing Tide files from Marinha do Brasil");

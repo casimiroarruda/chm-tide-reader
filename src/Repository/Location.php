@@ -10,6 +10,7 @@ class Location
         private \PDO $pdo
     ) {}
 
+    /** @return DomainLocation|null */
     public function findByMarineId(string $marineId): DomainLocation|null
     {
         $query = $this->pdo->prepare(
@@ -24,7 +25,9 @@ class Location
         );
         $query->execute(['marine_id' => $marineId]);
         $query->setFetchMode(\PDO::FETCH_CLASS, DomainLocation::class);
-        return $query->fetch() ?: null;
+        /** @var DomainLocation|false $fetch */
+        $fetch = $query->fetch();
+        return $fetch ?: null;
     }
 
     public function insert(DomainLocation $location): DomainLocation|false
@@ -44,6 +47,7 @@ class Location
         if (!$result) {
             return false;
         }
+        /** @var \stdClass $result */
         $result = $query->fetch(\PDO::FETCH_OBJ);
         $location->id = $result->id;
         return $location;

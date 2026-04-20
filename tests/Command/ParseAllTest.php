@@ -9,7 +9,6 @@ use Andr\ChmTideExtractor\Service\PdfParser;
 use Andr\ChmTideExtractor\Service\TideStore;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Application;
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
 
 class ParseAllTest extends TestCase
@@ -25,7 +24,7 @@ class ParseAllTest extends TestCase
         $this->storeMock = $this->createMock(TideStore::class);
 
         $application = new Application();
-        $application->addCommand(new ParseAll($this->pdfParserMock, $this->storeMock));
+        $application->addCommand(new ParseAll($this->pdfParserMock, $this->storeMock, $_ENV['TIDE_PDF_PATH']));
 
         $command = $application->find('tide:parse-all');
         $this->commandTester = new CommandTester($command);

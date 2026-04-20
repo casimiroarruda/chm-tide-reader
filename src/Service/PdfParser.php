@@ -21,6 +21,7 @@ class PdfParser
         $this->configuration = $configuration;
     }
 
+    /** @return Generator<Location> */
     public function fromCommand(): Generator
     {
         if (!isset($this->configuration)) {
