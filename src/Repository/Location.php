@@ -47,9 +47,9 @@ class Location
         if (!$result) {
             return false;
         }
-        /** @var \stdClass $result */
-        $result = $query->fetch(\PDO::FETCH_OBJ);
-        $location->id = $result->id;
+        /** @var array{id: string} $result */
+        $result = $query->fetch(\PDO::FETCH_ASSOC);
+        $location->id = $result['id'];
         return $location;
     }
 

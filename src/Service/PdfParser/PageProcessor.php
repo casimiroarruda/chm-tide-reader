@@ -27,17 +27,23 @@ class PageProcessor
 
     public function process(): void
     {
+        /** @var array<string> $textArray */
         $textArray = $this->page->getTextArray();
-        array_walk($textArray, function ($value, $key) use (&$textArray) {
-            if (!isset($textArray[$key + 1])) {
-                return;
-            }
-            $type = $this->discoverType($value, $textArray[$key + 1]);
+        array_walk(
+            $textArray,
 
-            if (is_callable($type)) {
-                $type($key, $textArray);
+            /** @var string $value */
+            function ($value, $key) use (&$textArray) {
+                if (!isset($textArray[$key + 1])) {
+                    return;
+                }
+                $type = $this->discoverType($value, $textArray[$key + 1]);
+
+                if (is_callable($type)) {
+                    $type($key, $textArray);
+                }
             }
-        });
+        );
     }
 
     public function discoverType(string $text, string $nextText): ?callable
@@ -53,7 +59,9 @@ class PageProcessor
     /** @param array<string> &$textArray */
     public function setCurrentMonth(int $currentKey, array &$textArray): Month
     {
-        $this->month = Month::{$textArray[$currentKey]};
+        /** @var Month $month */
+        $month = Month::{$textArray[$currentKey]};
+        $this->month = $month;
         return $this->month;
     }
 
