@@ -33,7 +33,7 @@ class ParseAll extends Command
         OutputInterface $output,
         SymfonyStyle $io
     ): int {
-        $configuration = new Configuration(dirname(__DIR__) . '/' . $_ENV['TIDE_PDF_PATH'], $year);
+        $configuration = new Configuration(dirname(__DIR__) . '/' . $_ENV['TIDE_PDF_PATH'], (string) $year);
         $this->pdfParser->configure($configuration);
         $iterator = $this->pdfParser->fromCommand();
         $io->title("Parsing Tide files from Marinha do Brasil");

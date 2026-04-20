@@ -73,7 +73,7 @@ class PageProcessor
         while (isset($textArray[$tideDataIndex]) && preg_match("/(?P<hour>\d{2})(?P<minute>\d{2})\s+(?P<height>-?\d{1,2}\.\d{1,2})/", $textArray[$tideDataIndex], $matches) === 1) {
             $time = new \DateTime("{$year}-{$month}-{$day} {$matches['hour']}:{$matches['minute']}", $this->location->timezone);
             $height = (float) $matches["height"];
-            $type = Type::determine($height, $this->location->meanSeaLevel);
+            $type = Type::determine($height, (float) $this->location->meanSeaLevel);
             $this->location->tides->add(new Tide($time, $height, $type, $this->location));
             $matches = [];
             $tideDataIndex++;

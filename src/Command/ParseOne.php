@@ -44,7 +44,7 @@ class ParseOne extends Command
             $io->error($e->getMessage());
             return Command::FAILURE;
         }
-        $configuration = new Configuration(dirname($file, 2), $year);
+        $configuration = new Configuration(dirname($file, 2), (string) $year);
         $this->pdfParser->configure($configuration);
         $io->title("Parsing Tide file: [" . basename($file) . "] from Marinha do Brasil");
         $location = $this->pdfParser->processFile($file);
