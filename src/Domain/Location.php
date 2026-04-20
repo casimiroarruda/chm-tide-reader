@@ -18,10 +18,10 @@ class Location
     public function __construct()
     {
         $this->tides = new Tide\Collection([]);
-        if (isset($this->point) && !($this->point instanceof Point)) {
+        if (isset($this->point) && is_string($this->point)) {
             $this->point = Point::fromWKT($this->point);
         }
-        if (isset($this->timezone) && !($this->timezone instanceof DateTimeZone)) {
+        if (isset($this->timezone) && is_string($this->timezone)) {
             $this->timezone = new DateTimeZone($this->timezone);
         }
     }

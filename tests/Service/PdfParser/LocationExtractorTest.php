@@ -2,12 +2,13 @@
 
 namespace Andr\ChmTideExtractor\Tests\Service\PdfParser;
 
+use Andr\ChmTideExtractor\Domain\Location;
 use Andr\ChmTideExtractor\Service\PdfParser\LocationExtractor;
 use PHPUnit\Framework\TestCase;
 
 class LocationExtractorTest extends TestCase
 {
-    public function testExtract(): void
+    public function testFillLocation(): void
     {
         $pageArray = [
             "Other text",
@@ -17,17 +18,18 @@ class LocationExtractorTest extends TestCase
             "Nível médio 1.55 m"
         ];
         
+        $location = new Location();
         $extractor = new LocationExtractor($pageArray, 1);
-        $data = $extractor->extract();
+        $extractor->fillLocation($location);
 
-        $this->assertEquals("02° 54'.0 S", $data['latitude']);
-        $this->assertEquals("39° 55'.0 W", $data['longitude']);
-        $this->assertInstanceOf(\DateTimeZone::class, $data['timezone']);
-        $this->assertEquals("-03:00", $data['timezone']->getName());
-        $this->assertEquals(1.55, $data['meanSeaLevel']);
+        $this->assertEquals(-2.9, $location->point->latitude);
+        $this->assertEquals(-39.92, $location->point->longitude);
+        $this->assertInstanceOf(\DateTimeZone::class, $location->timezone);
+        $this->assertEquals("-03:00", $location->timezone->getName());
+        $this->assertEquals("1.55", $location->meanSeaLevel);
     }
 
-    public function testExtractWithSkips(): void
+    public function testFillLocationWithSkips(): void
     {
         $pageArray = [
             "Header",
@@ -40,12 +42,13 @@ class LocationExtractorTest extends TestCase
             "Nível médio 1,55 m"
         ];
         
+        $location = new Location();
         $extractor = new LocationExtractor($pageArray, 1);
-        $data = $extractor->extract();
+        $extractor->fillLocation($location);
 
-        $this->assertEquals("02° 54'.0 S", $data['latitude']);
-        $this->assertEquals("39° 55'.0 W", $data['longitude']);
-        $this->assertEquals("-03:00", $data['timezone']->getName());
-        $this->assertEquals(1.55, $data['meanSeaLevel']);
+        $this->assertEquals(-2.9, $location->point->latitude);
+        $this->assertEquals(-39.92, $location->point->longitude);
+        $this->assertEquals("-03:00", $location->timezone->getName());
+        $this->assertEquals("1.55", $location->meanSeaLevel);
     }
 }

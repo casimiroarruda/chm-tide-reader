@@ -6,7 +6,7 @@ enum Month: string
 {
     case Janeiro = "01";
     case Fevereiro = "02";
-    case Marco = "03";
+    case Março = "03";
     case Abril = "04";
     case Maio = "05";
     case Junho = "06";
@@ -16,23 +16,4 @@ enum Month: string
     case Outubro = "10";
     case Novembro = "11";
     case Dezembro = "12";
-
-    public static function get(string $month): self|false
-    {
-        return match (mb_convert_case($month, MB_CASE_TITLE, "UTF-8")) {
-            "Janeiro" => self::Janeiro,
-            "Fevereiro" => self::Fevereiro,
-            "Março", "Marco" => self::Marco,
-            "Abril" => self::Abril,
-            "Maio" => self::Maio,
-            "Junho" => self::Junho,
-            "Julho" => self::Julho,
-            "Agosto" => self::Agosto,
-            "Setembro" => self::Setembro,
-            "Outubro" => self::Outubro,
-            "Novembro" => self::Novembro,
-            "Dezembro" => self::Dezembro,
-            default => false
-        };
-    }
 }

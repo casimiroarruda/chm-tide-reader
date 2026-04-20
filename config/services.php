@@ -58,7 +58,8 @@ return function (ContainerConfigurator $container): void {
 
     $services->set(ParseAll::class)
         ->arg('$pdfParser', service(PdfParser::class))
-        ->arg('$store', service(TideStore::class));
+        ->arg('$store', service(TideStore::class))
+        ->arg('$tidePdfPath', param('tide_pdf_path'));
 
     $services->set(ParseOne::class)
         ->arg('$pdfParser', service(PdfParser::class))
