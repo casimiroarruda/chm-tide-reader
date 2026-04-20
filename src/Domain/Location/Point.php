@@ -38,10 +38,10 @@ class Point
         );
     }
 
-    public static function fromWKT(string $wkt): ?self
+    public static function fromWKT(string $wkt): self
     {
         if (preg_match("/POINT\((?P<longitude>-?\d+\.?\d*)\s+(?P<latitude>-?\d+\.?\d*)\)/", $wkt, $matches) !== 1) {
-            return null;
+            throw new \Exception("Invalid WKT string");
         }
         return new self(
             (float) $matches["longitude"],
