@@ -2,26 +2,31 @@
 
 namespace Andr\ChmTideExtractor\Service\PdfParser;
 
+use Andr\ChmTideExtractor\Domain\Location;
+use Andr\ChmTideExtractor\Domain\Location\Point;
+
 class LocationExtractor
 {
+    /** @param array<string> &$pageArray */
     public function __construct(
         private array &$pageArray,
         private int $index
     ) {}
 
-    public function extract(): array
+    public function fillLocation(Location $location): void
     {
-        return [
-            "latitude" => $this->extractLatitudeFromPageArray(),
-            "longitude" => $this->extractLongitudeFromPageArray(),
-            "timezone" => $this->extractTimeZoneFromPageArray(),
-            "meanSeaLevel" => $this->extractMeanSeaLevelFromPageArray()
-        ];
+        $latitude = $this->extractLatitudeFromPageArray();
+        $longitude = $this->extractLongitudeFromPageArray();
+        $location->point = Point::fromDMS($longitude, $latitude);
+        $location->timezone = $this->extractTimeZoneFromPageArray();
+        $location->meanSeaLevel = (string) $this->extractMeanSeaLevelFromPageArray();
     }
 
     public function extractLatitudeFromPageArray(): string
     {
-        preg_match("/Latitude (?P<latitude>\d{1,2}°\s?\d{1,2}(&#39;|')\.?\d?\s[NSWE])/", $this->pageArray[$this->index], $matches);
+        while (preg_match("/Latitude (?P<latitude>\d{1,2}°\s?\d{1,2}(&#39;|')\.?\d?\s[NSWE])/", $this->pageArray[$this->index], $matches) !== 1) {
+            $this->index++;
+        }
         return str_replace("&#39;", "'", $matches["latitude"]);
     }
 

@@ -32,6 +32,7 @@ class PdfParser
         }
     }
 
+    /** @return array<string> */
     public function getListingFiles(): array
     {
         return array_map(
@@ -43,6 +44,10 @@ class PdfParser
         );
     }
 
+    /** 
+     * @param array<string> $listingFiles 
+     * @return array<Location>
+     * */
     public function processFiles(array $listingFiles): array
     {
         if (!isset($this->configuration)) {

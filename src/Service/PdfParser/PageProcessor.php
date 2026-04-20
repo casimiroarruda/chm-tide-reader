@@ -12,6 +12,7 @@ use Smalot\PdfParser\Page;
 
 class PageProcessor
 {
+    /** @var array<string> */
     private array $weekdays = ["QUI", "SEX", "SAB", "DOM", "SEG", "TER", "QUA", "SÁB"];
     private Month $month;
 
@@ -51,19 +52,17 @@ class PageProcessor
         };
     }
 
+    /** @param array<string> &$textArray */
     public function fillLocation(int $currentKey, array &$textArray): void
     {
         if ($this->location->isFilled()) {
             return;
         }
         $this->location->name = str_replace(" - " . $this->year, "", $textArray[$currentKey]);
-        $locationExtractor = new LocationExtractor($textArray, $currentKey + 1);
-        $locationData = $locationExtractor->extract();
-        $this->location->point = Point::fromDMS($locationData["longitude"], $locationData["latitude"]);
-        $this->location->timezone = $locationData["timezone"];
-        $this->location->meanSeaLevel = $locationData["meanSeaLevel"];
+        (new LocationExtractor($textArray, $currentKey + 1))->fillLocation($this->location);
     }
 
+    /** @param array<string> &$textArray */
     public function addTidesOfTheDay(int $currentKey, array &$textArray): void
     {
         $day = ltrim($textArray[$currentKey], "0");
