@@ -5,9 +5,9 @@ namespace Andr\ChmTideExtractor\Tests\Service\PdfParser;
 use Andr\ChmTideExtractor\Domain\Location;
 use Andr\ChmTideExtractor\Domain\Location\Point;
 use Andr\ChmTideExtractor\Domain\Tide\Type;
-use Andr\ChmTideExtractor\Service\PdfParser\PageProcessor;
 use PHPUnit\Framework\TestCase;
 use Smalot\PdfParser\Page;
+use Andr\ChmTideExtractor\Service\PdfParser\PageProcessor;
 
 class PageProcessorTest extends TestCase
 {
@@ -21,7 +21,7 @@ class PageProcessorTest extends TestCase
         $this->location = new Location();
     }
 
-    private function getProcessor(Location $location = null): PageProcessor
+    private function getProcessor(?Location $location): PageProcessor
     {
         return new PageProcessor($this->pageMock, $location ?? $this->location, $this->year);
     }
@@ -29,7 +29,7 @@ class PageProcessorTest extends TestCase
     #[\PHPUnit\Framework\Attributes\DataProvider('discoverTypeProvider')]
     public function testDiscoverType(string $text, string $nextText, string|array $expectedType): void
     {
-        $processor = $this->getProcessor();
+        $processor = $this->getProcessor(null);
         $type = $processor->discoverType($text, $nextText);
 
         if (is_array($expectedType)) {
@@ -62,7 +62,7 @@ class PageProcessorTest extends TestCase
             "Nível médio 1.55 m"
         ];
 
-        $processor = $this->getProcessor();
+        $processor = $this->getProcessor(null);
         $processor->fillLocation(0, $textArray);
 
         $this->assertEquals("PORTO DE TESTE", $this->location->name);
@@ -87,7 +87,7 @@ class PageProcessorTest extends TestCase
             "Nível médio 1.55 m"
         ];
 
-        $processor = $this->getProcessor();
+        $processor = $this->getProcessor(null);
         $processor->fillLocation(0, $textArray);
 
         $this->assertEquals("Already Filled", $this->location->name);
@@ -110,8 +110,8 @@ class PageProcessorTest extends TestCase
         ];
 
         $this->pageMock->method('getTextArray')->willReturn($textArray);
-        
-        $processor = $this->getProcessor();
+
+        $processor = $this->getProcessor(null);
         // We need to set the month by processing the month entry
         $processor->process();
 
@@ -137,8 +137,8 @@ class PageProcessorTest extends TestCase
         ];
 
         $this->pageMock->method('getTextArray')->willReturn($textArray);
-        
-        $processor = $this->getProcessor();
+
+        $processor = $this->getProcessor(null);
         $processor->process();
         $this->assertCount(0, $this->location->tides);
     }
@@ -157,7 +157,7 @@ class PageProcessorTest extends TestCase
             "0123    2.10"
         ]);
 
-        $processor = $this->getProcessor();
+        $processor = $this->getProcessor(null);
         $processor->process();
 
         $this->assertEquals("PORTO DE TESTE", $this->location->name);
