@@ -4,6 +4,7 @@ namespace Andr\ChmTideExtractor\Service\PdfParser;
 
 use Andr\ChmTideExtractor\Domain\Location;
 use Andr\ChmTideExtractor\Domain\Location\Point;
+use Andr\ChmTideExtractor\Domain\Location\Timezone;
 
 class LocationExtractor
 {
@@ -45,7 +46,8 @@ class LocationExtractor
         }
         return str_replace(["UTC ", "."], ["", ":"], $matches['timezone'])
         |> (fn($str) => str_pad($str, 6, "0", STR_PAD_RIGHT))
-        |> (fn($str) =>  new \DateTimeZone($str));
+        |> (fn($str) =>  Timezone::fromOffset($str))
+        |> (fn($tz) =>  new \DateTimeZone($tz->value));
     }
 
     public function extractMeanSeaLevelFromPageArray(): float

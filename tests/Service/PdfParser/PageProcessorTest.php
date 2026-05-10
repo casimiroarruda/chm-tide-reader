@@ -4,6 +4,7 @@ namespace Andr\ChmTideExtractor\Tests\Service\PdfParser;
 
 use Andr\ChmTideExtractor\Domain\Location;
 use Andr\ChmTideExtractor\Domain\Location\Point;
+use Andr\ChmTideExtractor\Domain\Location\Timezone;
 use Andr\ChmTideExtractor\Domain\Tide\Type;
 use PHPUnit\Framework\TestCase;
 use Smalot\PdfParser\Page;
@@ -67,7 +68,7 @@ class PageProcessorTest extends TestCase
 
         $this->assertEquals("PORTO DE TESTE", $this->location->name);
         $this->assertEquals(-2.9, $this->location->point->latitude);
-        $this->assertEquals("-03:00", $this->location->timezone->getName());
+        $this->assertEquals(Timezone::AMERICA_SAO_PAULO->value, $this->location->timezone->getName());
         $this->assertEquals(1.55, $this->location->meanSeaLevel);
     }
 

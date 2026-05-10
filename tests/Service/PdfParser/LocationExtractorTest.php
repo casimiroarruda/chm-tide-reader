@@ -3,6 +3,7 @@
 namespace Andr\ChmTideExtractor\Tests\Service\PdfParser;
 
 use Andr\ChmTideExtractor\Domain\Location;
+use Andr\ChmTideExtractor\Domain\Location\Timezone;
 use Andr\ChmTideExtractor\Service\PdfParser\LocationExtractor;
 use PHPUnit\Framework\TestCase;
 
@@ -17,7 +18,7 @@ class LocationExtractorTest extends TestCase
             "Fuso UTC -03.0 horas",
             "Nível médio 1.55 m"
         ];
-        
+
         $location = new Location();
         $extractor = new LocationExtractor($pageArray, 1);
         $extractor->fillLocation($location);
@@ -25,7 +26,7 @@ class LocationExtractorTest extends TestCase
         $this->assertEquals(-2.9, $location->point->latitude);
         $this->assertEquals(-39.92, $location->point->longitude);
         $this->assertInstanceOf(\DateTimeZone::class, $location->timezone);
-        $this->assertEquals("-03:00", $location->timezone->getName());
+        $this->assertEquals(Timezone::AMERICA_SAO_PAULO->value, $location->timezone->getName());
         $this->assertEquals("1.55", $location->meanSeaLevel);
     }
 
@@ -41,14 +42,14 @@ class LocationExtractorTest extends TestCase
             "Even more",
             "Nível médio 1,55 m"
         ];
-        
+
         $location = new Location();
         $extractor = new LocationExtractor($pageArray, 1);
         $extractor->fillLocation($location);
 
         $this->assertEquals(-2.9, $location->point->latitude);
         $this->assertEquals(-39.92, $location->point->longitude);
-        $this->assertEquals("-03:00", $location->timezone->getName());
+        $this->assertEquals(Timezone::AMERICA_SAO_PAULO->value, $location->timezone->getName());
         $this->assertEquals("1.55", $location->meanSeaLevel);
     }
 }
